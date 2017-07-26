@@ -1,16 +1,16 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : localhost_3306
-Source Server Version : 50621
-Source Host           : localhost:3306
+Source Server         : 118.31.102.18
+Source Server Version : 50719
+Source Host           : 118.31.102.18:3306
 Source Database       : rvc
 
 Target Server Type    : MYSQL
-Target Server Version : 50621
+Target Server Version : 50719
 File Encoding         : 65001
 
-Date: 2017-07-26 11:24:55
+Date: 2017-07-20 15:17:55
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -108,12 +108,11 @@ CREATE TABLE `t_building` (
   PRIMARY KEY (`id`),
   KEY `fk_t_building_t_community1_idx` (`community_id`),
   KEY `unique_code` (`unique_code`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='楼栋';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='楼栋';
 
 -- ----------------------------
 -- Records of t_building
 -- ----------------------------
-INSERT INTO `t_building` VALUES ('1', '1', '01', '0010010101', '01楼栋', '01楼栋', '01楼栋', '01楼栋', '1.00', '1', '0');
 
 -- ----------------------------
 -- Table structure for t_building_calorimeter
@@ -122,15 +121,15 @@ DROP TABLE IF EXISTS `t_building_calorimeter`;
 CREATE TABLE `t_building_calorimeter` (
   `id` int(11) NOT NULL,
   `building_unique_code` varchar(32) NOT NULL COMMENT '楼栋唯一编号',
-  `name` varchar(32) NOT NULL DEFAULT '' COMMENT '名称',
+  `name` varchar(32) NOT NULL COMMENT '名称',
   `type` tinyint(4) DEFAULT NULL COMMENT '设备类型(0：lora，1：有线)',
   `period` int(11) DEFAULT NULL COMMENT '上报周期',
   `comm_address` varchar(32) NOT NULL COMMENT '通信地址',
   `unresolved` tinyint(4) DEFAULT NULL COMMENT '是否定义',
-  `pro_type` varchar(32) NOT NULL DEFAULT '' COMMENT '类型(厂家品牌)决定通信协议',
+  `pro_type` varchar(32) NOT NULL COMMENT '类型(厂家品牌)决定通信协议',
   `pipe_size` int(11) DEFAULT NULL COMMENT '管径',
   `remark` varchar(128) NOT NULL DEFAULT '' COMMENT '备注',
-  `created_at` bigint(20) NOT NULL DEFAULT '0',
+  `created_at` bigint(20) NOT NULL,
   `isdel` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `fk_t_building_calorimeter_t_building1_idx` (`building_unique_code`)
@@ -139,7 +138,6 @@ CREATE TABLE `t_building_calorimeter` (
 -- ----------------------------
 -- Records of t_building_calorimeter
 -- ----------------------------
-INSERT INTO `t_building_calorimeter` VALUES ('1', '0010010101', '1号楼栋热表', '1', '25', '125486545', '1', '德邦', '25', 'test', '0', '1');
 
 -- ----------------------------
 -- Table structure for t_building_calorimeter_data
@@ -156,7 +154,7 @@ CREATE TABLE `t_building_calorimeter_data` (
   `temper_diff` double DEFAULT NULL COMMENT '温差',
   `use_flow` double DEFAULT NULL COMMENT '瞬时流量',
   `total_flow` double DEFAULT NULL COMMENT '总流量',
-  `status` tinyint(4) DEFAULT NULL COMMENT '通信状态',
+  `static` tinyint(4) DEFAULT NULL COMMENT '通信状态',
   `data_type` tinyint(4) DEFAULT NULL COMMENT '数据类型（1：小时，2：当前）',
   `created_at` bigint(20) NOT NULL,
   `isdel` tinyint(4) NOT NULL DEFAULT '0',
@@ -187,20 +185,18 @@ CREATE TABLE `t_building_valve` (
   `strategy` int(11) DEFAULT NULL COMMENT '控制策略 pid支持部分',
   `kp` double DEFAULT NULL COMMENT '比例单元',
   `ki` double DEFAULT NULL COMMENT '积分单元',
-  `kd` double DEFAULT NULL,
-  `target` double DEFAULT NULL COMMENT '目标值',
-  `max_target` double DEFAULT NULL COMMENT '最大目标值',
-  `min_target` double DEFAULT NULL COMMENT '最小目标值',
-  `createdAt` bigint(20) NOT NULL DEFAULT '0',
+  `target` float DEFAULT NULL COMMENT '目标值',
+  `max_target` float DEFAULT NULL COMMENT '最大目标值',
+  `min_target` float DEFAULT NULL COMMENT '最小目标值',
+  `createdAt` bigint(20) NOT NULL,
   `isdel` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `fk_t_building_valve_t_building1_idx` (`building_unique_code`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='楼栋调节阀';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='楼栋调节阀';
 
 -- ----------------------------
 -- Records of t_building_valve
 -- ----------------------------
-INSERT INTO `t_building_valve` VALUES ('1', '0010010101', '1号楼栋调节阀', '1', '10', '23542cd', '1', null, null, '20', 'test', '1', '1.22', '22.6', '52.3', '22.6', '1.22', '52.3', '0', '1');
 
 -- ----------------------------
 -- Table structure for t_building_valve_data
@@ -211,7 +207,7 @@ CREATE TABLE `t_building_valve_data` (
   `building_unique_code` varchar(32) NOT NULL,
   `opening` float DEFAULT NULL COMMENT '开度',
   `collect_time` bigint(20) DEFAULT NULL,
-  `status` int(11) DEFAULT NULL,
+  `static` int(11) DEFAULT NULL,
   `created_at` bigint(20) NOT NULL,
   `isdel` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
@@ -290,12 +286,11 @@ CREATE TABLE `t_community` (
   `isdel` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `fk_t_community_t_hotstation1_idx` (`hotstation_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='小区';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='小区';
 
 -- ----------------------------
 -- Records of t_community
 -- ----------------------------
-INSERT INTO `t_community` VALUES ('1', '1', '00100101', '01小区', '1', '1', '1', '1', '1', '1', '0');
 
 -- ----------------------------
 -- Table structure for t_company
@@ -312,21 +307,14 @@ CREATE TABLE `t_company` (
   `isdel` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否已删除(0: 未删除，1：已删除)',
   `created_at` bigint(20) NOT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COMMENT='热力公司';
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COMMENT='热力公司';
 
 -- ----------------------------
 -- Records of t_company
 -- ----------------------------
-INSERT INTO `t_company` VALUES ('1', null, '001', '热力公司001', 'lisi ', '123456789', '', '1', '0');
+INSERT INTO `t_company` VALUES ('1', null, '001', '热力公司', 'lisi ', '123456789', '', '0', '0');
 INSERT INTO `t_company` VALUES ('2', null, '002', '热力公司', 'zhangsan', '123456789', '', '1', '0');
-INSERT INTO `t_company` VALUES ('3', null, '003', '热力公司001', 'zhangsan', '123456789', '', '1', '0');
-INSERT INTO `t_company` VALUES ('4', '1', '1', 'dengfei', 'xxxxx', '1112233', '', '1', '12345');
-INSERT INTO `t_company` VALUES ('5', '1', '1', 'dengfei', 'xxxxx', '1112233', '', '0', '12347');
-INSERT INTO `t_company` VALUES ('6', null, '001', 'test0热力公司', '盾安', '11112323313', '', '0', '0');
-INSERT INTO `t_company` VALUES ('7', null, '001', 'test1热力公司', '盾安', '11112323313', '', '1', '0');
-INSERT INTO `t_company` VALUES ('8', null, '001', 'test2热力公司', '盾安', '11112323313', '', '1', '0');
-INSERT INTO `t_company` VALUES ('9', null, '009', 'test3热力公司', '盾安', '11112323313', '', '1', '0');
-INSERT INTO `t_company` VALUES ('10', null, '010', '盾安阀门1', '小明', '112231313133', '', '0', '0');
+INSERT INTO `t_company` VALUES ('3', null, '003', '热力公司', 'zhangsan', '123456789', '', '1', '0');
 
 -- ----------------------------
 -- Table structure for t_concentrator
@@ -336,11 +324,11 @@ CREATE TABLE `t_concentrator` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `building_unique_code` varchar(32) NOT NULL COMMENT '楼栋唯一编号',
   `code` varchar(32) NOT NULL COMMENT '采集器编号',
-  `name` varchar(32) NOT NULL DEFAULT '' COMMENT '名称',
+  `name` varchar(32) NOT NULL COMMENT '名称',
   `address` varchar(128) NOT NULL COMMENT '位置',
   `gprsid` varchar(32) NOT NULL COMMENT 'GPRS ID\n',
   `ip` varchar(32) NOT NULL COMMENT 'ip地址',
-  `login_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '登录时间',
+  `login_time` bigint(20) NOT NULL COMMENT '登录时间',
   `refresh_time` bigint(20) NOT NULL COMMENT '刷新时间',
   `unresolved` int(11) DEFAULT NULL COMMENT '是否定义',
   `sim_code` varchar(32) NOT NULL COMMENT 'sim卡号',
@@ -351,12 +339,11 @@ CREATE TABLE `t_concentrator` (
   `isdel` tinyint(4) DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `fk_t_concentrator_t_building1_idx` (`building_unique_code`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='采集器';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='采集器';
 
 -- ----------------------------
 -- Records of t_concentrator
 -- ----------------------------
-INSERT INTO `t_concentrator` VALUES ('1', '0010010101', '1701221', '', '东南大是大非', '21548', '1.1.1.1', '0', '1500550598', '1', '54521', '1', '0', 'test', '1500550598', '1');
 
 -- ----------------------------
 -- Table structure for t_gateway
@@ -366,32 +353,31 @@ CREATE TABLE `t_gateway` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `company_id` int(11) NOT NULL COMMENT '热力公司id',
   `name` varchar(128) NOT NULL COMMENT '名称',
-  `mac` varchar(32) NOT NULL DEFAULT '' COMMENT 'mac地址',
-  `sim_code` varchar(32) NOT NULL DEFAULT '' COMMENT 'sim卡号',
-  `gprsid` varchar(32) NOT NULL DEFAULT '' COMMENT 'sim卡串号',
-  `version` varchar(16) NOT NULL DEFAULT '' COMMENT '网关SDK版本',
-  `city` varchar(32) NOT NULL DEFAULT '' COMMENT '城市',
-  `area` varchar(32) NOT NULL DEFAULT '' COMMENT '网关所在区域',
-  `address` varchar(128) NOT NULL DEFAULT '' COMMENT '网关详细地址',
-  `lat` varchar(32) NOT NULL DEFAULT '' COMMENT '网关所在纬度',
-  `lng` varchar(32) NOT NULL DEFAULT '' COMMENT '网关所在经度',
+  `mac` varchar(32) NOT NULL COMMENT 'mac地址',
+  `sim_code` varchar(32) NOT NULL COMMENT 'sim卡号',
+  `gprsid` varchar(32) NOT NULL COMMENT 'sim卡串号',
+  `version` varchar(16) NOT NULL COMMENT '网关SDK版本',
+  `city` varchar(32) NOT NULL COMMENT '城市',
+  `area` varchar(32) NOT NULL COMMENT '网关所在区域',
+  `address` varchar(128) NOT NULL COMMENT '网关详细地址',
+  `lat` varchar(32) NOT NULL COMMENT '网关所在纬度',
+  `lng` varchar(32) NOT NULL COMMENT '网关所在经度',
   `txpower` int(11) DEFAULT NULL COMMENT '网关发射功率',
   `latency` int(11) DEFAULT NULL COMMENT '网关链路时延(ms)',
-  `ip` varchar(32) NOT NULL DEFAULT '' COMMENT '网关ip地址',
+  `ip` varchar(32) NOT NULL COMMENT '网关ip地址',
   `status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '网关连接状态(0：未连接，1：已连接)',
   `lastOn` bigint(20) DEFAULT NULL COMMENT '网关最近连接时间',
   `lastOff` bigint(20) DEFAULT NULL COMMENT '网关最近断开时间',
-  `created_at` bigint(20) NOT NULL DEFAULT '0',
+  `created_at` bigint(20) NOT NULL,
   `remark` varchar(500) NOT NULL DEFAULT '' COMMENT '备注',
   `isdel` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否已删除(0: 未删除，1：已删除)',
   PRIMARY KEY (`id`),
   KEY `fk_t_gateway_t_company_idx` (`company_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='基站';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='基站';
 
 -- ----------------------------
 -- Records of t_gateway
 -- ----------------------------
-INSERT INTO `t_gateway` VALUES ('1', '1', '1号基站', '30-52-CB-04-D3-F8', '54521', '21548', '', '', '', '深圳知路', '', '', null, null, '1.1.1.1', '0', null, null, '1500550598', 'test', '1');
 
 -- ----------------------------
 -- Table structure for t_hotstation
@@ -410,36 +396,11 @@ CREATE TABLE `t_hotstation` (
   PRIMARY KEY (`id`),
   KEY `fk_t_hotstation_t_company1_idx` (`company_id`),
   CONSTRAINT `fk_t_hotstation_t_company1` FOREIGN KEY (`company_id`) REFERENCES `t_company` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='热站';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='热站';
 
 -- ----------------------------
 -- Records of t_hotstation
 -- ----------------------------
-INSERT INTO `t_hotstation` VALUES ('1', '1', '001001', '001热站', '0', '0', '0', '0', '0');
-
--- ----------------------------
--- Table structure for t_householder
--- ----------------------------
-DROP TABLE IF EXISTS `t_householder`;
-CREATE TABLE `t_householder` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `code` varchar(32) NOT NULL COMMENT '住户编号',
-  `id_card` varchar(32) NOT NULL COMMENT '缴费号',
-  `unit_code` varchar(32) NOT NULL COMMENT '单元号',
-  `area` float DEFAULT NULL COMMENT '采暖面积',
-  `phone` varchar(32) NOT NULL COMMENT '电话',
-  `name` varchar(32) DEFAULT NULL COMMENT '户主',
-  `mes_status` tinyint(4) NOT NULL DEFAULT '1' COMMENT '缴费状态（1：未缴费，0：缴费）',
-  `created_at` bigint(20) NOT NULL,
-  `isdel` tinyint(4) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  KEY `code` (`code`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of t_householder
--- ----------------------------
-INSERT INTO `t_householder` VALUES ('1', '0010010101010101', '000', '01', '1', '1', '01住户', '1', '1', '0');
 
 -- ----------------------------
 -- Table structure for t_house_calorimeter
@@ -459,12 +420,11 @@ CREATE TABLE `t_house_calorimeter` (
   `isdel` tinyint(4) DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `fk_t_house_calorimeter_t_householder1_idx` (`house_code`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='户用热表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='户用热表';
 
 -- ----------------------------
 -- Records of t_house_calorimeter
 -- ----------------------------
-INSERT INTO `t_house_calorimeter` VALUES ('1', '0010010101010101', '1', '10', '1234567890', '1', '德邦', '10', 'test', '1500537860', '1');
 
 -- ----------------------------
 -- Table structure for t_house_calorimeter_data
@@ -474,7 +434,7 @@ CREATE TABLE `t_house_calorimeter_data` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `comm_address` varchar(32) NOT NULL COMMENT '通信地址',
   `house_code` varchar(32) NOT NULL,
-  `collect_time` bigint(20) DEFAULT NULL COMMENT '采集时间',
+  `collect_time_bigint` bigint(20) DEFAULT NULL COMMENT '采集时间',
   `value` double DEFAULT NULL COMMENT '读数',
   `use_flow` double DEFAULT NULL COMMENT '瞬时流量',
   `total_flow` double DEFAULT NULL COMMENT '总流量',
@@ -506,19 +466,14 @@ CREATE TABLE `t_house_valve` (
   `remark` varchar(128) NOT NULL DEFAULT '' COMMENT '备注',
   `created_at` bigint(20) NOT NULL,
   `isdel` tinyint(4) NOT NULL DEFAULT '0',
-  `power_type` int(11) DEFAULT NULL COMMENT '供电类型  0:电源   1:电池',
-  `version` varchar(32) NOT NULL DEFAULT '' COMMENT '阀门版本',
   PRIMARY KEY (`id`),
   KEY `fk_t_house_valve_t_householder1_idx` (`house_code`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of t_house_valve
 -- ----------------------------
-INSERT INTO `t_house_valve` VALUES ('1', '0010010101010101', '1', '10', '0010010101010101', '1', '1', '0', '1号阀门', '1500529648', '1', null, '');
-INSERT INTO `t_house_valve` VALUES ('2', '0010010101010102', '0', '10', '0010010101010102', '0', '0', '0', '2号阀门', '1', '0', null, '');
-INSERT INTO `t_house_valve` VALUES ('3', '0010010101010103', '1', null, '0010010101010103', '1', '1', '1', '3号阀门', '3', '0', null, '');
-INSERT INTO `t_house_valve` VALUES ('4', '0010010101010104', '1', '2', '0010010101010104', '2', '2', '2', '4号阀门', '1', '0', null, '');
+INSERT INTO `t_house_valve` VALUES ('1', '0010010101010101', '1', '10', '1234567890', '1', '1', '0', 'test', '1500529648', '0');
 
 -- ----------------------------
 -- Table structure for t_house_valve_data
@@ -537,17 +492,34 @@ CREATE TABLE `t_house_valve_data` (
   `isdel` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `fk_t_house_valve_data_t_householder1_idx` (`house_code`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COMMENT='户通断阀数据';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='户通断阀数据';
 
 -- ----------------------------
 -- Records of t_house_valve_data
 -- ----------------------------
-INSERT INTO `t_house_valve_data` VALUES ('1', '0010010101010101', '100', '100', '1', '1', '1', '1', '1', '0');
-INSERT INTO `t_house_valve_data` VALUES ('2', '0010010101010101', '98', '98', '2', '2', '2', '2', '2', '2');
-INSERT INTO `t_house_valve_data` VALUES ('3', '0010010101010102', '111', '111', '3', '3', '3', '3', '3', '0');
-INSERT INTO `t_house_valve_data` VALUES ('4', '0010010101010102', '77', '77', '2', '2', '2', '2', '2', '0');
-INSERT INTO `t_house_valve_data` VALUES ('5', '0010010101010103', '102', '102', '5', '4', '5', '4', '4', '0');
-INSERT INTO `t_house_valve_data` VALUES ('6', '0010010101010103', '115', '115', '5', '4', '5', '5', '54', '0');
+
+-- ----------------------------
+-- Table structure for t_householder
+-- ----------------------------
+DROP TABLE IF EXISTS `t_householder`;
+CREATE TABLE `t_householder` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(32) NOT NULL COMMENT '住户编号',
+  `id_card` varchar(32) NOT NULL COMMENT '缴费号',
+  `unit_code` varchar(32) NOT NULL COMMENT '单元号',
+  `area` float DEFAULT NULL COMMENT '采暖面积',
+  `phone` varchar(32) NOT NULL COMMENT '电话',
+  `name` varchar(32) DEFAULT NULL COMMENT '户主',
+  `mes_status` tinyint(4) NOT NULL DEFAULT '1' COMMENT '缴费状态（1：未缴费，0：缴费）',
+  `created_at` bigint(20) NOT NULL,
+  `isdel` tinyint(4) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `code` (`code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of t_householder
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for t_open_log
@@ -587,35 +559,11 @@ CREATE TABLE `t_system_log` (
   `isdel` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `fk_t_system_log_user1_idx` (`employ_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8 COMMENT='系统日志';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='系统日志';
 
 -- ----------------------------
 -- Records of t_system_log
 -- ----------------------------
-INSERT INTO `t_system_log` VALUES ('2', 'df', '1', '3435435', 'xxxyyuiuu', 'poooioooi', '0pijmbnnfv', '98765', '0');
-INSERT INTO `t_system_log` VALUES ('3', 'df', '1', '3435435', 'xxxyyuiuu', 'poooioooi', '0pijmbnnfv', '98765', '0');
-INSERT INTO `t_system_log` VALUES ('4', 'df', '1', '3435435', 'xxxyyuiuu', 'poooioooi', '0pijmbnnfv', '98765', '0');
-INSERT INTO `t_system_log` VALUES ('5', 'df', '1', '3435435', 'xxxyyuiuu', 'poooioooi', '0pijmbnnfv', '98765', '0');
-INSERT INTO `t_system_log` VALUES ('6', 'df', '1', '3435435', 'xxxyyuiuu', 'poooioooi', '0pijmbnnfv', '98765', '0');
-INSERT INTO `t_system_log` VALUES ('7', 'df', '1', '3435435', 'xxxyyuiuu', 'poooioooi', '0pijmbnnfv', '98765', '0');
-INSERT INTO `t_system_log` VALUES ('8', 'df', '1', '3435435', 'xxxyyuiuu', 'poooioooi', '0pijmbnnfv', '98765', '0');
-INSERT INTO `t_system_log` VALUES ('9', 'df', '1', '3435435', 'xxxyyuiuu', 'poooioooi', '0pijmbnnfv', '98765', '0');
-INSERT INTO `t_system_log` VALUES ('10', 'df', '1', '3435435', 'xxxyyuiuu', 'poooioooi', '0pijmbnnfv', '98765', '0');
-INSERT INTO `t_system_log` VALUES ('11', 'df', '1', '3435435', 'xxxyyuiuu', 'poooioooi', '0pijmbnnfv', '98765', '0');
-INSERT INTO `t_system_log` VALUES ('12', 'df', '1', '3435435', 'xxxyyuiuu', 'poooioooi', '0pijmbnnfv', '98765', '0');
-INSERT INTO `t_system_log` VALUES ('13', 'df', '1', '3435435', 'xxxyyuiuu', 'poooioooi', '0pijmbnnfv', '98765', '0');
-INSERT INTO `t_system_log` VALUES ('14', 'df', '1', '3435435', 'xxxyyuiuu', 'poooioooi', '0pijmbnnfv', '98765', '0');
-INSERT INTO `t_system_log` VALUES ('15', 'df', '1', '3435435', 'xxxyyuiuu', 'poooioooi', '0pijmbnnfv', '98765', '0');
-INSERT INTO `t_system_log` VALUES ('16', 'df', '1', '3435435', 'xxxyyuiuu', 'poooioooi', '0pijmbnnfv', '98765', '0');
-INSERT INTO `t_system_log` VALUES ('17', 'df', '1', '3435435', 'xxxyyuiuu', 'poooioooi', '0pijmbnnfv', '98765', '0');
-INSERT INTO `t_system_log` VALUES ('18', 'df', '1', '3435435', 'xxxyyuiuu', 'poooioooi', '0pijmbnnfv', '98765', '0');
-INSERT INTO `t_system_log` VALUES ('19', 'df', '1', '3435435', 'xxxyyuiuu', 'poooioooi', '0pijmbnnfv', '98765', '0');
-INSERT INTO `t_system_log` VALUES ('20', 'df', '1', '3435435', 'xxxyyuiuu', 'poooioooi', '0pijmbnnfv', '98765', '0');
-INSERT INTO `t_system_log` VALUES ('21', 'df', '1', '3435435', 'xxxyyuiuu', 'poooioooi', '0pijmbnnfv', '98765', '0');
-INSERT INTO `t_system_log` VALUES ('22', 'df', '1', '3435435', 'xxxyyuiuu', 'poooioooi', '0pijmbnnfv', '98765', '0');
-INSERT INTO `t_system_log` VALUES ('23', 'df', '1', '3435435', 'xxxyyuiuu', 'poooioooi', '0pijmbnnfv', '98765', '0');
-INSERT INTO `t_system_log` VALUES ('24', 'df', '1', '3435435', 'xxxyyuiuu', 'poooioooi', '0pijmbnnfv', '98765', '0');
-INSERT INTO `t_system_log` VALUES ('25', 'df', '1', '3435435', 'xxxyyuiuu', 'poooioooi', '0pijmbnnfv', '98765', '0');
 
 -- ----------------------------
 -- Table structure for t_system_parameter
@@ -663,9 +611,3 @@ CREATE TABLE `user` (
 -- Records of user
 -- ----------------------------
 INSERT INTO `user` VALUES ('1', 'dengfei', '1', '20', '57879600@qq.com', 'zhilu', 'xxx', 'yyy', '123456', '0', '123456', null, '0', '11', '1');
-
--- ----------------------------
--- View structure for latest_house_valve_date
--- ----------------------------
-DROP VIEW IF EXISTS `latest_house_valve_date`;
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost`  VIEW `latest_house_valve_date` AS select max(collect_time) as collect_time,house_code from t_house_valve_data group by house_code ;
